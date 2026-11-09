@@ -4,7 +4,18 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import ValidationError
 
 from app.chat.manager import manager
-from app.chat.schemas import ChatIn, ChatOut, ErrorOut, JoinIn, PingIn, PongOut, client_message
+from app.chat.schemas import (
+    ChatIn,
+    ChatOut,
+    ErrorOut,
+    JoinIn,
+    PingIn,
+    PongOut,
+    UserJoinedOut,
+    UserLeftOut,
+    WelcomeOut,
+    client_message,
+)
 from app.config import settings
 
 router = APIRouter()
@@ -43,17 +54,42 @@ async def chat_ws(websocket: WebSocket)->None:
 
             # 3. Dispatch on the message's class. Each case pulls out the fields it needs.
             match message:
-                case ChatIn(text=text):
-                    # The server sets name and sent_at. It never trusts the browser for them.
-                    await manager.broadcast(
-                        ChatOut(name="anonymous", text=text, sent_at=datetime.now(timezone.utc))
+                case JoinIn(name=name):
+                    if manager.name_of(websocket) is not None:
+                        await manager.send(websocket, ErrorOut(message="already joined"))
+                        continue
+                    manager.set_name(websocket, name)
+                    # The newcomer gets the room's current state: recent chat + who's online.
+                    await manager.send(
+                        websocket,
+                        WelcomeOut(history=manager.recent(), online=manager.online_count()),
                     )
+                    # Everyone else hears about it. The newcomer already knows, from welcome.
+                    await manager.broadcast(
+                        UserJoinedOut(name=name, online=manager.online_count()),
+                        exclude=websocket,
+                    )
+
+                case ChatIn(text=text):
+                    name = manager.name_of(websocket)
+                    if name is None:
+                        await manager.send(websocket, ErrorOut(message="join first"))
+                        continue
+                    # The server sets name and sent_at. It never trusts the browser for them.
+                    chat = ChatOut(name=name, text=text, sent_at=datetime.now(timezone.utc))
+                    manager.remember(chat)
+                    await manager.broadcast(chat)
+
                 case PingIn():
-                    # Only the one who asked gets the pong.
+                    # Only the one who asked gets the pong. Works before joining too.
                     await manager.send(websocket, PongOut())
-                case JoinIn():
-                    # Temporary until Level 4 adds names.
-                    await manager.send(websocket, ErrorOut(message="join comes in level 4"))
     except WebSocketDisconnect:
-        # The client left: stop tracking it, so we never send to a dead socket.
-        manager.disconnect(websocket)
+        # The normal way out: the client closed the tab or the connection dropped.
+        pass
+    finally:
+        # 4. Cleanup ALWAYS runs: after a normal disconnect, and also if
+        #    something above crashed. Otherwise a crashed connection would stay
+        #    in the manager forever as a "ghost" user.
+        name = manager.disconnect(websocket)
+        if name is not None:
+            await manager.broadcast(UserLeftOut(name=name, online=manager.online_count()))

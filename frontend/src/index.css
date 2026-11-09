@@ -178,6 +178,48 @@ code {
 .response-area::placeholder {
   color: rgba(251, 240, 223, 0.4);
 }
+/* ---------- Chat (Level 4) ---------- */
+.chat {
+  width: min(600px, calc(100vw - 32px));
+  text-align: left;
+}
+.chat h1 {
+  font-size: 2em;
+}
+.chat .row {
+  display: flex;
+  gap: 0.5rem;
+}
+.chat input {
+  flex: 1;
+  padding: 0.5rem;
+  font: inherit;
+}
+.chat button {
+  padding: 0.5rem 1rem;
+  font: inherit;
+}
+.messages {
+  list-style: none;
+  padding: 0.75rem;
+  margin: 1rem 0;
+  min-height: 200px;
+  max-height: 50vh;
+  overflow-y: auto;
+  background: #1a1a1a;
+  border-radius: 8px;
+}
+.messages small {
+  opacity: 0.5;
+}
+.notice,
+.empty {
+  opacity: 0.6;
+  font-style: italic;
+}
+.error {
+  color: crimson;
+}
 @media (prefers-reduced-motion) {
   *,
   ::before,

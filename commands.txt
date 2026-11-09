@@ -44,3 +44,32 @@ uv run pytest -v
 # Type-check the frontend: no errors
 cd ../frontend
 bun run typecheck
+
+=== Task 5 + Task 6 (Levels 4 and 5): join/leave, online count, catch-up history (written by Claude, 2026-11-09) ===
+
+# No command: Claude rewrote tests/test_chat_ws.py (Level 3 chat tests now join first, plus 7 Level 4 tests and 2 Level 5 tests),
+# tests/test_manager.py (dict connections, dropped user is announced, exclude) and tests/conftest.py (also clears history)
+
+# Run the tests before writing the code: they should FAIL (the manager has no history yet)
+cd backend
+uv run pytest -q
+
+# No command: Claude rewrote app/chat/manager.py (names, online count, exclude, history deque)
+# and app/chat/chat.py (join/chat rules, welcome, user_joined, user_left in finally)
+
+# Run the tests again: 20 passed
+uv run pytest -v
+
+# No command: Claude wrote frontend/src/config.ts, src/hooks/useChatSocket.ts, the 5 components in src/components/,
+# added chat styles to src/index.css, and made src/App.tsx layout-only
+
+# Type-check the frontend: no errors
+cd ../frontend
+bun run typecheck
+
+# Browser check on a separate test copy, so the user's own servers on 8000/3000 were left alone
+# (Claude started these from the browser pane; this is what they ran)
+cd ../backend
+ALLOWED_ORIGINS='["http://localhost:3001"]' uv run uvicorn app.main:app --port 8001
+cd ../frontend
+PORT=3001 BUN_PUBLIC_WS_URL=ws://localhost:8001/ws bun --hot src/index.ts
