@@ -1,0 +1,48 @@
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Frontend dependencies and build output
+node_modules/
+dist/
+build/
+.vite/
+out/
+*.tgz
+
+# Frontend coverage and caches
+coverage/
+*.lcov
+.eslintcache
+.cache/
+*.tsbuildinfo
+
+# Bun
+.bun/
+
+# Logs
+*.log
+logs/
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
