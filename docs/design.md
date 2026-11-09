@@ -75,7 +75,7 @@ Websockets_Basics/
 │   │   ├── config.py          settings: allowed origins, history size
 │   │   └── chat/
 │   │       ├── __init__.py
-│   │       ├── router.py      the WebSocket endpoint: /ws
+│   │       ├── chat.py        the WebSocket endpoint: /ws
 │   │       ├── manager.py     ConnectionManager: connect, disconnect, broadcast, history
 │   │       └── schemas.py     the message protocol as Pydantic models
 │   └── tests/

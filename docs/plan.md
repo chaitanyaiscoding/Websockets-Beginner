@@ -76,12 +76,12 @@ Things the design implies but no feature test naturally hits. Each one has a tes
 ### Task 2 (Level 1): Echo
 
 **Files:**
-- Create: `backend/app/chat/__init__.py`, `backend/app/chat/router.py`, `backend/tests/test_chat_ws.py`
+- Create: `backend/app/chat/__init__.py`, `backend/app/chat/chat.py`, `backend/tests/test_chat_ws.py`
 - Modify: `backend/app/main.py` (include the router)
 - Modify: `frontend/src/App.tsx` (bare echo page)
 
 **Interfaces:**
-- Produces: `app.chat.router.router` (an `APIRouter`) with `@router.websocket("/ws") async def chat_ws(websocket: WebSocket) -> None`.
+- Produces: `app.chat.chat.router` (an `APIRouter`) with `@router.websocket("/ws") async def chat_ws(websocket: WebSocket) -> None`.
 
 - [ ] **Step 1: Write the failing test** in `tests/test_chat_ws.py`:
   ```python
@@ -127,7 +127,7 @@ Things the design implies but no feature test naturally hits. Each one has a tes
 
 **Files:**
 - Create: `backend/app/chat/manager.py`, `backend/tests/test_manager.py`
-- Modify: `backend/app/chat/router.py`, `backend/tests/test_chat_ws.py`
+- Modify: `backend/app/chat/chat.py`, `backend/tests/test_chat_ws.py`
 
 **Interfaces:**
 - Produces: `class ConnectionManager` with:
@@ -179,7 +179,7 @@ Things the design implies but no feature test naturally hits. Each one has a tes
 
 **Files:**
 - Create: `backend/app/chat/schemas.py`
-- Modify: `backend/app/chat/manager.py`, `backend/app/chat/router.py`, `backend/tests/test_chat_ws.py`, `backend/tests/conftest.py`
+- Modify: `backend/app/chat/manager.py`, `backend/app/chat/chat.py`, `backend/tests/test_chat_ws.py`, `backend/tests/conftest.py`
 - Create: `frontend/src/types/messages.ts`
 - Modify: `frontend/src/App.tsx`
 
@@ -259,7 +259,7 @@ Things the design implies but no feature test naturally hits. Each one has a tes
 ### Task 5 (Level 4): Join, leave, online count, real UI
 
 **Files:**
-- Modify: `backend/app/chat/manager.py`, `backend/app/chat/router.py`, `backend/tests/test_chat_ws.py`, `backend/tests/test_manager.py`
+- Modify: `backend/app/chat/manager.py`, `backend/app/chat/chat.py`, `backend/tests/test_chat_ws.py`, `backend/tests/test_manager.py`
 - Create: `frontend/src/config.ts`, `frontend/src/hooks/useChatSocket.ts`, `frontend/src/components/JoinForm.tsx`, `ConnectionStatus.tsx`, `OnlineCount.tsx`, `MessageList.tsx`, `MessageInput.tsx`
 - Modify: `frontend/src/App.tsx` (becomes layout only)
 
@@ -346,7 +346,7 @@ Things the design implies but no feature test naturally hits. Each one has a tes
 ### Task 6 (Level 5): Catch-up history
 
 **Files:**
-- Modify: `backend/app/chat/manager.py`, `backend/app/chat/router.py`, `backend/tests/test_chat_ws.py`, `backend/tests/conftest.py`
+- Modify: `backend/app/chat/manager.py`, `backend/app/chat/chat.py`, `backend/tests/test_chat_ws.py`, `backend/tests/conftest.py`
 - Modify: `frontend/src/hooks/useChatSocket.ts`
 
 **Interfaces:**
