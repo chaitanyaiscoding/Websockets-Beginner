@@ -220,6 +220,11 @@ code {
 .error {
   color: crimson;
 }
+/* Level 6: make "reconnecting" impossible to miss */
+.status-reconnecting {
+  color: #f5a623;
+  font-weight: 700;
+}
 @media (prefers-reduced-motion) {
   *,
   ::before,

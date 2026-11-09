@@ -73,3 +73,26 @@ cd ../backend
 ALLOWED_ORIGINS='["http://localhost:3001"]' uv run uvicorn app.main:app --port 8001
 cd ../frontend
 PORT=3001 BUN_PUBLIC_WS_URL=ws://localhost:8001/ws bun --hot src/index.ts
+
+=== Task 7 (Level 6): Survive drops: reconnect + heartbeat (written by Claude, 2026-11-09) ===
+
+# No command: Claude rewrote frontend/src/hooks/useChatSocket.ts (reconnect with growing waits, auto re-join,
+# ping every 25 s / pong timeout 10 s), changed src/components/ConnectionStatus.tsx (4 states),
+# added a .status-reconnecting style to src/index.css, and wrote README.md (run commands, ping options)
+
+# Type-check the frontend: no errors
+cd frontend
+bun run typecheck
+
+# Backend run command now spells out uvicorn's server-side heartbeat (these are the defaults)
+cd ../backend
+uv run uvicorn app.main:app --reload --port 8000 --ws-ping-interval 20 --ws-ping-timeout 20
+
+# Browser check on a throwaway test copy, so the user's servers on 8000/3000 were left alone.
+# The frontend copy (in Claude's scratchpad) had config.ts pointed at ws://localhost:8001/ws.
+# The test backend was stopped and started from the browser pane to simulate the server going down.
+ALLOWED_ORIGINS='["http://localhost:3001"]' uv run uvicorn app.main:app --port 8001
+PORT=3001 bun --hot src/index.ts      # run inside the test copy of frontend/
+
+# Backend tests still pass: 20 passed
+uv run pytest -q
