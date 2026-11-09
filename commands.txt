@@ -19,3 +19,28 @@ uv run pytest -v
 
 # Run the tests again: 4 passed
 uv run pytest -v
+
+=== Task 4 (Level 3): JSON protocol, validation, origin check (written by Claude, 2026-11-09) ===
+
+# Rename the misspelled fixture file so pytest finds it (pytest only reads "conftest.py")
+cd backend
+git mv tests/confest.py tests/conftest.py
+
+# No command: Claude wrote tests/conftest.py (autouse fixture that empties the shared manager),
+# replaced tests/test_chat_ws.py with the 8 JSON-protocol tests, and changed tests/test_manager.py to broadcast PongOut
+
+# Run the tests before writing the code: they should FAIL (app.chat.schemas doesn't exist yet)
+uv run pytest -q
+
+# No command: Claude wrote app/chat/schemas.py, changed app/chat/manager.py (send, broadcast),
+# changed app/chat/chat.py (origin check, validation, match on message type),
+# and changed app/main.py so CORS reads settings.allowed_origins
+
+# Run the tests again: 10 passed
+uv run pytest -v
+
+# No command: Claude wrote frontend/src/types/messages.ts and changed frontend/src/App.tsx to send/receive JSON
+
+# Type-check the frontend: no errors
+cd ../frontend
+bun run typecheck

@@ -1,4 +1,5 @@
 from fastapi import WebSocket
+from pydantic import BaseModel
 
 
 class ConnectionManager:
@@ -22,9 +23,15 @@ class ConnectionManager:
         this twice for the same socket is safe, with no KeyError."""
         self.connections.discard(websocket)
 
-    async def broadcast_text(self, text: str) -> None:
-        """Send text to every connection. If one send fails, drop that
-        connection and carry on with the others."""
+    async def send(self, websocket: WebSocket, message: BaseModel) -> None:
+        """Send one protocol message to ONE connection (for example pong or error)."""
+        await websocket.send_text(message.model_dump_json())
+
+    async def broadcast(self, message: BaseModel) -> None:
+        """Send one protocol message to EVERY connection. If one send fails,
+        drop that connection and carry on with the others."""
+        # Turn the model into JSON once, not once per connection.
+        text = message.model_dump_json()
         # Loop over a COPY. disconnect() changes self.connections, and
         # changing a set while looping over it raises
         # "RuntimeError: Set changed size during iteration".
